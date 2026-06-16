@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * proofloop before/after assembler.
+ * fixer before/after assembler.
  *
  * Pairs the BEFORE and AFTER captures of a case (same checkpoint labels) into
  * the proof artifacts:
@@ -101,7 +101,7 @@ const cards = labels.map((label) => `
   </section>`).join('\n');
 
 const html = `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>proofloop — ${path.basename(caseDir)}</title>
+<title>fixer — ${path.basename(caseDir)}</title>
 <style>
   :root{--c-b:#C0392B;--c-a:#1E8449}
   body{margin:0;font:16px/1.5 system-ui,sans-serif;background:#0e0f13;color:#e8e9ec}
@@ -117,7 +117,7 @@ const html = `<!doctype html><meta charset=utf-8><meta name=viewport content="wi
   .tag.b{right:10px;background:var(--c-b)} .tag.a{left:10px;background:var(--c-a)}
   .gif{width:100%;margin-top:12px;border-radius:10px;border:1px solid #23252c}
 </style>
-<header><h1>proofloop — ${path.basename(caseDir)}</h1>
+<header><h1>fixer — ${path.basename(caseDir)}</h1>
 <p>Drag each slider: left edge is AFTER, right edge is BEFORE. GIF below cuts between the two.</p></header>
 ${cards}
 <script>

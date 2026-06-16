@@ -1,4 +1,4 @@
-# proofloop
+# fixer
 
 Catch a bug red-handed on camera, fix it, then prove it's dead on the **same
 camera**. A closed loop that returns before/after visual evidence — screenshots,
@@ -13,7 +13,7 @@ SCOPE → PROVE-BEFORE → DIAGNOSE → FIX → PROVE-AFTER → PRESENT → (loo
 
 ## For the agent
 
-The skill (`skills/proofloop/SKILL.md`) is the method; read it first. proofloop
+The skill (`skills/fixer/SKILL.md`) is the method; read it first. fixer
 **owns** the case-file contract (`templates/case-file.md`) and the before/after
 assembler (`templates/compare.mjs`), and **borrows** everything else — capture from
 playwright-cli and walkabout's recorder, stitching from ffmpeg, discovery from the
@@ -27,7 +27,7 @@ AFTER captured from the **same** repro spec, paired on disk.
 
 | File | Role |
 |---|---|
-| `skills/proofloop/SKILL.md` | the loop, the proof gates, what to borrow |
+| `skills/fixer/SKILL.md` | the loop, the proof gates, what to borrow |
 | `templates/case-file.md` | per-issue evidence bundle (the contract) |
 | `templates/compare.mjs` | pairs before/after into side-by-side PNGs, GIFs, and a `compare.html` slider (needs ffmpeg) |
 | `docs/pattern.md` | design rationale, capture notes, adopters |

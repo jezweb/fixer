@@ -1,5 +1,5 @@
 {
-  "name": "proofloop",
+  "name": "fixer",
   "description": "Prove a bug exists on camera, fix it, then prove it's gone on the same camera. A closed loop returning before/after visual evidence (screenshots, GIF, video) plus a written verdict per issue.",
   "version": "1.0.0",
   "author": {
@@ -7,6 +7,6 @@
     "email": "jeremy@jezweb.net"
   },
   "license": "MIT",
-  "homepage": "https://github.com/jezweb/proofloop",
-  "repository": "https://github.com/jezweb/proofloop"
+  "homepage": "https://github.com/jezweb/fixer",
+  "repository": "https://github.com/jezweb/fixer"
 }

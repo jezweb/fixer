@@ -1,5 +1,5 @@
 <!--
-proofloop case file — one per issue. Lives in <project>/.jez/proofloop/<slug>/case.md
+fixer case file — one per issue. Lives in <project>/.jez/fixer/<slug>/case.md
 alongside its evidence: before/ after/ compare/ subdirs.
 Fill top-to-bottom; the loop fills the next field at each stage. A case closes
 only at verdict: proven fixed, with both before/ and after/ populated from the

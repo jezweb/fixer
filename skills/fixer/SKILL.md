@@ -1,13 +1,13 @@
 ---
-name: proofloop
+name: fixer
 description: Prove a bug exists on camera, fix it, then prove it's gone on the same camera — a closed loop that returns before/after visual evidence (screenshots, GIF, video) plus a written verdict per issue. Use when chasing reported bugs or visual regressions, when "is this actually fixed?" needs proof rather than a claim, or when a fix has to be shown to a user/client. Sibling of walkabout (borrows its recorder) and the self-refining loop (borrows its iterate-until-done).
 ---
 
-# proofloop — catch it red-handed, then prove it's dead
+# fixer — catch it red-handed, then prove it's dead
 
 A bug isn't fixed because the code changed and the tests went green. It's fixed
 when the **same capture that caught it misbehaving** now shows it behaving — same
-viewport, same steps, same checkpoints, only the result different. proofloop is
+viewport, same steps, same checkpoints, only the result different. fixer is
 that closed loop, and the deliverable is the **evidence**, not the assertion.
 
 The shape, per issue:
@@ -115,4 +115,4 @@ you hit a documented blocker. Then take the next case file.
 | AFTER includes unchanged-checkpoint regression guards | a fix that breaks the neighbour isn't a fix |
 
 The earned-place test for this skill: if a session could close a bug as fixed
-*without* a same-spec before/after pair on disk, proofloop wasn't used.
+*without* a same-spec before/after pair on disk, fixer wasn't used.

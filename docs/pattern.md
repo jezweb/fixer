@@ -1,4 +1,4 @@
-# proofloop — design rationale and deep reference
+# fixer — design rationale and deep reference
 
 ## Why it exists
 
@@ -11,7 +11,7 @@ The family already had the pieces but not the loop that joins them:
 
 None of them do the symmetric **prove-it-broken → fix → prove-it-fixed** cycle,
 and none start from "go read the issues and the chat and find the candidates".
-proofloop is the composition layer that does, and its output is *evidence* — a
+fixer is the composition layer that does, and its output is *evidence* — a
 before/after pair on the same capture spec — not an assertion that it's fixed.
 
 ## The one idea: evidence symmetry
@@ -25,7 +25,7 @@ step, relabelled checkpoint) and the comparison proves nothing.
 This is why the **repro spec** (`spec.json` in the case file) is the spine: BEFORE
 and AFTER are two runs of one spec, and `compare.mjs` pairs them by checkpoint label.
 
-## What proofloop owns vs borrows
+## What fixer owns vs borrows
 
 Owns (lives here): the **case-file contract** and the **before/after assembler**
 (`compare.mjs`). These are the genuinely-new parts.
@@ -60,11 +60,11 @@ is exactly the derived-file rot to avoid.
 
 ## Storage
 
-Per project: `<project>/.jez/proofloop/<slug>/` holding `case.md`, `spec.json`,
+Per project: `<project>/.jez/fixer/<slug>/` holding `case.md`, `spec.json`,
 `before/`, `after/`, `compare/`. Commit the markdown + spec; gitignore the binaries
 (`before/`, `after/`, `compare/*.png`, `*.gif`, `*.mp4`).
 
 ## Adopters
 
-- _(none yet — add the first app proofloop closes a case on, with a one-line note
+- _(none yet — add the first app fixer closes a case on, with a one-line note
   on anything that surprised you)_

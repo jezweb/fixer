@@ -1,12 +1,12 @@
 {
-  "name": "proofloop",
+  "name": "fixer",
   "owner": {
     "name": "Jeremy Dawes",
     "email": "jeremy@jezweb.net"
   },
   "plugins": [
     {
-      "name": "proofloop",
+      "name": "fixer",
       "source": "./",
       "description": "Catch a bug red-handed on camera, fix it, prove it's dead on the same camera. Before/after visual evidence + verdict per issue."
     }
