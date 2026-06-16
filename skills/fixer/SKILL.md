@@ -17,14 +17,16 @@ SCOPE → PROVE-BEFORE → DIAGNOSE → FIX → PROVE-AFTER → PRESENT → (loo
         the indictment           root cause           the acquittal
 ```
 
-You **own** two things: the **case file** (`templates/case-file.md`, one per
-issue, the contract everything hangs off) and the **before/after assembler**
-(`templates/compare.mjs`). Everything else you **borrow** — don't rebuild it:
+You **own** three things: the **case file** (`templates/case-file.md`, one per
+issue, the contract everything hangs off), the **before/after assembler**
+(`templates/compare.mjs`), and the **CDP recorder** (`templates/record-cdp.example.mjs`
+— bundled so the video leg needs no walkabout install). Everything else you
+**borrow** — don't rebuild it:
 
 | Need | Borrow |
 |---|---|
 | Stills + DOM snapshot on any live URL | `playwright-cli` (`/playwright-cli` skill) |
-| Moving video without shimmer | walkabout's `record-demo.mjs` — CDP screencast → PNG frames → ffmpeg, **never** Playwright `recordVideo` (its adaptive encoder makes the page blink) |
+| Moving video without shimmer | the bundled `record-cdp` recorder (`templates/record-cdp.example.mjs`) — CDP `Page.startScreencast` → timestamped JPEG frames → ffmpeg; same technique as walkabout, no walkabout dependency. **Never** Playwright `recordVideo` — it writes blink-y or 0-byte output (lived: 0 bytes every run) |
 | GIF / side-by-side / stacked clip | `ffmpeg` (via `compare.mjs`) |
 | Candidate bugs | `github` MCP (issues), `google-chat` MCP, app console/network, a `dev-tools:ux-audit` pass |
 | Iterate fix→reprove until the gate passes | the loop machinery (`run-a-self-refining-loop` / ralph-loop) |
@@ -54,18 +56,32 @@ One case file per confirmed candidate. Rank by user-facing impact × reproducibi
 
 ## 1 — PROVE-BEFORE: the indictment
 
-Reproduce it on the **live** app with a **deterministic, re-runnable** capture —
-because PROVE-AFTER must replay it byte-for-byte. Pin everything that varies:
+Reproduce it on a **deterministic, re-runnable** capture — because PROVE-AFTER must
+replay it byte-for-byte. Pin everything that varies:
 
+- **Where** — the **live** app for read-only-observable bugs. But when the repro
+  needs a precondition you can't safely stage on prod (an FK-linked row, a
+  patient with a related carer, a survey token — anything requiring a write), use
+  a **local seeded dev DB** and pin the seed so AFTER replays the same data. Don't
+  assume local can't show "deploy-class" DB failures: local Cloudflare D1 enforces
+  FKs (`PRAGMA foreign_keys = 1`), so FK-constraint bugs DO reproduce locally.
 - **Viewport(s)** — fixed px. If it's a responsive bug, capture each breakpoint.
+  Lists often render a desktop `<table>` AND hidden mobile cards with the same
+  text — scope locators to `getByRole('table')` or you'll grab the hidden twin.
 - **Steps** — ordered, role-based locators, each ending at a **labelled checkpoint**
   (`01-list-loaded`, `02-after-submit`). The labels are the pairing key for AFTER.
-- **Auth** — reuse a Playwright `storageState` for logged-in apps (see walkabout's
-  `record-tour.mjs` header); gitignore it.
+- **Auth** — either reuse a Playwright `storageState` (gitignore it), or — faster
+  for cookie/token stacks — POST the app's sign-in endpoint via `context.request`:
+  it shares the page cookie jar, so one call logs in and the capture starts on the
+  bug, not the form.
 
 Capture at each checkpoint: **screenshot + animated GIF + full video + console +
-network**, and pin the **code location** (`file:line`) you suspect. Cap stills at
-1440px before re-reading (`sips -Z 1440`, per the screenshot rule).
+network** — and grab the **failing response BODY**, not just the status; it usually
+names the mechanism (`500 {"error":"Failed to delete surgeon"}` → an FK constraint,
+not a permissions bug). Pin the **code location** (`file:line`) you suspect. Cap
+stills at 1440px before re-reading (`sips -Z 1440`, per the screenshot rule). The
+worked example + earned gotchas (modal stacking, shadcn `role="dialog"`, ESM
+resolution) live in `docs/pattern.md` — skim it before your first capture.
 
 **If you cannot reproduce it on camera, the verdict is `not reproduced` — stop.**
 Don't fix blind. A bug you can't film is a bug you can't prove you fixed.
