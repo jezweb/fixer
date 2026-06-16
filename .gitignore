@@ -1,7 +1,7 @@
 node_modules/
 *.log
 .DS_Store
-# proofloop evidence binaries are per-project, not part of the plugin
+# fixer evidence binaries are per-project, not part of the plugin
 **/before/
 **/after/
 **/compare/*.png
