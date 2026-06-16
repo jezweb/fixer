@@ -1,0 +1,11 @@
+node_modules/
+*.log
+.DS_Store
+# proofloop evidence binaries are per-project, not part of the plugin
+**/before/
+**/after/
+**/compare/*.png
+**/*.gif
+**/*.mp4
+*.storageState.json
+auth-state.json
