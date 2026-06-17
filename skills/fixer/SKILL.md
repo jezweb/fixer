@@ -1,6 +1,6 @@
 ---
 name: fixer
-description: Prove a bug exists on camera, fix it, then prove it's gone on the same camera — a closed loop that returns before/after visual evidence (screenshots, GIF, video) plus a written verdict per issue. Use when chasing reported bugs or visual regressions, when "is this actually fixed?" needs proof rather than a claim, or when a fix has to be shown to a user/client. Sibling of walkabout (borrows its recorder) and the self-refining loop (borrows its iterate-until-done).
+description: Prove a bug exists on camera, fix it, then prove it's gone on the same camera — a closed loop that returns before/after visual evidence (screenshots, GIF, video) plus a written verdict per issue. Also runs in VERIFY mode — prove an already-shipped change meets its original requirement and return a client-readable verdict. Use when chasing reported bugs or visual regressions, when "is this actually fixed?" needs proof rather than a claim, when a fix has to be shown to a user/client, or when verifying someone's merged PR is genuinely done against its spec. Sibling of walkabout (borrows its recorder) and the self-refining loop (borrows its iterate-until-done).
 ---
 
 # fixer — catch it red-handed, then prove it's dead
@@ -16,6 +16,17 @@ The shape, per issue:
 SCOPE → PROVE-BEFORE → DIAGNOSE → FIX → PROVE-AFTER → PRESENT → (loop)
         the indictment           root cause           the acquittal
 ```
+
+fixer runs in **two modes** that share all the machinery below (the camera, the
+blind-audit gate, the recorder, the proof gates):
+
+- **FIX** (default) — a reported bug. Prove it broken, fix it, prove it fixed. The
+  loop above.
+- **VERIFY** (acceptance) — an *already-shipped* change (a merged PR, often someone
+  else's work) that someone needs to *trust* is done. There's no "prove broken"
+  half: the source of truth is the **original requirement**, not a bug, and the
+  output is an acceptance verdict + a client-readable ✓, not a fix. See
+  [**Verify mode**](#verify-mode-acceptance--prove-someone-elses-ship-is-done) below.
 
 You **own** three things: the **case file** (`templates/case-file.md`, one per
 issue, the contract everything hangs off), the **before/after assembler**
@@ -83,6 +94,12 @@ stills at 1440px before re-reading (`sips -Z 1440`, per the screenshot rule). Th
 worked example + earned gotchas (modal stacking, shadcn `role="dialog"`, ESM
 resolution) live in `docs/pattern.md` — skim it before your first capture.
 
+**The journey is a free bug-scan.** Walking the real path surfaces *adjacent*
+breakage you weren't hunting — a stray console error, a second control that
+misbehaves, a modal that opens when it shouldn't. Log it. The one-bug focus is the
+thing that makes you walk past the other three the camera just caught; capture them
+as their own candidates instead of dropping them.
+
 **If you cannot reproduce it on camera, the verdict is `not reproduced` — stop.**
 Don't fix blind. A bug you can't film is a bug you can't prove you fixed.
 
@@ -92,6 +109,11 @@ From the evidence, name the **mechanism** in code, not the symptom. "The list
 shows stale rows" is a symptom; "the query caches on `projectId` but the cache key
 omits the filter, so a filter change reuses the prior result set" is a cause. Write
 it in the case file with `file:line`. A wrong diagnosis makes a green AFTER a lie.
+
+**Before you fix, confirm the surface is reachable.** Grep the component/handler
+you're about to change up to a routed page — fixing an orphan (a component nothing
+renders, a hook nothing calls) yields a clean AFTER the user never sees. If the only
+importers are test files, you're about to fix the wrong thing.
 
 ## 3 — FIX
 
@@ -109,7 +131,12 @@ checkpoints in the spec.
 
 `compare.mjs` emits per-checkpoint **side-by-side PNGs**, a **before→after GIF/clip**,
 and a **`compare.html` slider**. Publish via `pagedrop` for a shareable `xr2.au` link.
-Pair it with a short written summary: claim → mechanism → fix → verdict.
+
+**Two cuts, two audiences.** The evidence has two readers, and they need different things:
+- **Author / you** — the full technical verdict: claim → mechanism → fix → before/after → any *surfaced* issues the journey caught.
+- **Stakeholder** (client, QA, non-technical owner) — a ~10-second clip + ONE plain-English line ("✓ the Theatre List now colours per hospital, matches the schedule"). No jargon, no file paths, no caveats they can't action.
+
+**Routing rule (load-bearing).** A clean pass → the stakeholder gets the ✓-cut directly. Anything short of a clean pass (`partially fixed` / `regressed elsewhere` / a gap) → the **author + owner hear first, privately**, and it's fixed before the stakeholder sees anything. Pushing a half-met verdict straight to the client is the trust-burning failure this rule exists to prevent.
 
 **Verdict is one of:** `proven fixed` · `not reproduced` · `partially fixed` ·
 `regressed elsewhere`. Only `proven fixed` closes the case, and only with a real
@@ -121,6 +148,36 @@ If AFTER still shows the bug (or a new one), back to DIAGNOSE — this is where 
 self-refining loop earns its keep: iterate fix → reprove until the gate passes or
 you hit a documented blocker. Then take the next case file.
 
+## Verify mode (acceptance) — prove someone else's ship is done
+
+Same camera, different source of truth. Use when an already-merged change claims to
+satisfy a requirement and someone needs to **trust** it's done — a client, a QA lead,
+a PM signing off another dev's PR. This is fixer's prove-and-verdict half pointed at a
+requirement instead of a bug; there is no "prove broken" stage.
+
+Inputs: the **change** (PR / commit) **and** its **original requirement** — the
+ticket, card, or spec, in the words the work was meant to satisfy. If you can't find
+the requirement, get it before filming. "Looks right" is not acceptance.
+
+1. **Turn the requirement into checkpoints.** Same labelled steps as PROVE-BEFORE,
+   but each checkpoint asserts a *clause of the requirement*, not a bug repro. If the
+   card says "colour each hospital + show the legend", that's two checkpoints.
+2. **Run the journey on the merged code** (seed the precondition if the requirement
+   needs data that prod can't safely hold). Capture screenshot + clip + each
+   asserting checkpoint.
+3. **Blind-audit against the requirement** — an independent pass told *only* the
+   requirement text, which must find the pixels proving every clause or it FAILs.
+   Same gate as a fix's AFTER; here it guards the acceptance, not the cure. A
+   one-clause-short ship is `partially meets`, not `meets`.
+4. **Verdict** — one of: `meets` · `partially meets` · `misses` · `not reachable`.
+5. **Route it** per PRESENT's two-cuts rule: `meets` → the stakeholder gets the
+   ✓-clip; anything else → author + owner first, privately, before the stakeholder
+   sees it.
+
+The earned-place test for verify mode: a change is only called "done for the client"
+with a same-requirement capture on disk that a blind audit passed — never on the dev's
+"it's merged and green."
+
 ## Proof gates (hard — these are the whole point)
 
 | Gate | Why |
@@ -129,6 +186,9 @@ you hit a documented blocker. Then take the next case file.
 | Identical capture spec both sides | different camera = void comparison, you've proven nothing |
 | You personally inspect the AFTER frames | aggregate "tests pass" is the start of verification, not the end — read the actual pixels |
 | AFTER includes unchanged-checkpoint regression guards | a fix that breaks the neighbour isn't a fix |
+| AFTER is on the user-reachable surface, not an orphan component | a clean AFTER on a component nothing renders proves a fix the user never sees |
+| VERIFY: no "done for the client" without a same-requirement capture a blind audit passed | "looks done" to the dev is exactly what acceptance evidence exists to replace |
+| VERIFY: a gap reaches the author before the stakeholder | a half-met verdict handed straight to the client is a trust fire |
 
 The earned-place test for this skill: if a session could close a bug as fixed
 *without* a same-spec before/after pair on disk, fixer wasn't used.
