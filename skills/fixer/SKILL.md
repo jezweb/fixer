@@ -134,7 +134,14 @@ and a **`compare.html` slider**. Publish via `pagedrop` for a shareable `xr2.au`
 
 **Two cuts, two audiences.** The evidence has two readers, and they need different things:
 - **Author / you** — the full technical verdict: claim → mechanism → fix → before/after → any *surfaced* issues the journey caught.
-- **Stakeholder** (client, QA, non-technical owner) — a ~10-second clip + ONE plain-English line ("✓ the Theatre List now colours per hospital, matches the schedule"). No jargon, no file paths, no caveats they can't action.
+- **Stakeholder** (client, QA, non-technical owner) — the lightest cut that shows the delta + ONE plain-English line ("✓ the Theatre List now colours per hospital, matches the schedule"). No jargon, no file paths, no caveats they can't action.
+
+**Match the stakeholder cut to what changed (and crop tight).** A clip is the default but not always the right one — pick by what the fix actually altered:
+- **A static delta** (a label, a colour, a layout, a now-present element) → a **cropped before/after still** or the `compare.html` slider, *not* a 10-second clip. A still they absorb at a glance beats a clip they wait through to see a change that was already visible in frame one.
+- **A delta that only reads in motion** (a transition, an interaction, "it used to jump, now it doesn't") → the **before→after GIF/clip**. The motion *is* the proof.
+- Either way, **crop to the changed region** — full-screen only when the change is the cross-page layout itself. Everything the stakeholder doesn't weigh dilutes the ✓.
+
+This is the [decisions](https://github.com/jezweb/decisions) real-capture fidelity ladder (still < GIF < video; escalate only when the lighter medium can't show it) pointed at the acquittal cut: the camera still captures all media at every checkpoint for the author's record — this only governs which one the stakeholder is handed.
 
 **Routing rule (load-bearing).** A clean pass → the stakeholder gets the ✓-cut directly. Anything short of a clean pass (`partially fixed` / `regressed elsewhere` / a gap) → the **author + owner hear first, privately**, and it's fixed before the stakeholder sees anything. Pushing a half-met verdict straight to the client is the trust-burning failure this rule exists to prevent.
 
