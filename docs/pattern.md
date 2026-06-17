@@ -106,6 +106,12 @@ Worked example in `templates/capture-before.example.mjs`. Each cost real time on
    yielded `500 {"error":"Failed to delete surgeon"}`, which named the mechanism
    (FK 500 → generic toast) far better than the screenshot. Add the failing
    response body to the indictment, not just the pixels.
+7. **Symlinked `node_modules` breaks standalone ESM** — when you stage a merged PR
+   in a worktree and symlink `node_modules`, `node capture.mjs` can't resolve a bare
+   `import 'playwright'` through the symlink (`ERR_MODULE_NOT_FOUND`). Run the capture
+   from a dir with *real* `node_modules` and point it at the dev server over HTTP —
+   the script and the server don't need to share a tree. (Earned dogfooding VERIFY
+   mode on a merged PR.)
 
 ## The video leg — a self-contained recorder (`templates/record-cdp.example.mjs`)
 

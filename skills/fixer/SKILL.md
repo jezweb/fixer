@@ -174,6 +174,15 @@ the requirement, get it before filming. "Looks right" is not acceptance.
    ✓-clip; anything else → author + owner first, privately, before the stakeholder
    sees it.
 
+**Staging the merged code is the real cost** (lived). To run an *already-merged*
+change locally without disturbing your working branch: worktree off `main`, share
+`node_modules` by symlink, copy a seeded DB, run dev on its own port. And for a
+**data / logging / state** behaviour, the cleanest evidence is to **trigger it
+through the merged API** (an authenticated request) and screenshot the *rendered*
+result — far more reliable than driving the UI form, and it still proves both the
+server behaviour and the rendered wording. Dismiss any onboarding overlay first; it
+will sit right over your proof.
+
 The earned-place test for verify mode: a change is only called "done for the client"
 with a same-requirement capture on disk that a blind audit passed — never on the dev's
 "it's merged and green."
