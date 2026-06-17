@@ -1,8 +1,7 @@
 // fixer — PROVE-BEFORE capture (worked example)
 //
 // A real, working indictment capture from a Cloudflare Workers +
-// React 19 + Hono + D1 app. It films a CRUD-delete bug — "admin can't delete a
-// surgeon" — which is actually a foreign-key constraint surfacing as a generic
+// React 19 + Hono + D1 app. It films a CRUD-delete bug — "admin can't delete an// author" — which is actually a foreign-key constraint surfacing as a generic
 // error toast. Transplant and adapt; the inline comments are the gotchas that
 // cost real time, kept so the next adopter doesn't re-pay them.
 //
@@ -24,7 +23,7 @@ const VIEW = { width: 1440, height: 900 } // fixed viewport — AFTER must match
 // the SAME cookie jar as pages in that context, so one API POST logs in every page.
 const CRED = { email: process.env.FIXER_EMAIL, password: process.env.FIXER_PASSWORD }
 const SIGNIN_PATH = '/api/auth/sign-in/email'
-const TARGET = process.env.FIXER_TARGET || 'Dr Example Surgeon' // a row known to fail
+const TARGET = process.env.FIXER_TARGET || 'Example Author' // a row known to fail
 
 const log = (...a) => console.log('[capture]', ...a)
 const shot = async (page, name) => { await page.screenshot({ path: `${OUT}/shots/${name}.png` }); log('shot', name) }
@@ -44,7 +43,7 @@ const netFails = []
 page.on('response', (r) => { if (r.status() >= 400) netFails.push(`${r.status()} ${r.request().method()} ${r.url()}`) })
 
 // 01 — the scene. waitUntil networkidle + an explicit wait on settled content.
-await page.goto(`${BASE}/dashboard/surgeons`, { waitUntil: 'networkidle' })
+await page.goto(`${BASE}/dashboard/authors`, { waitUntil: 'networkidle' })
 // GOTCHA 2 — hidden responsive twins. Lists often render BOTH a desktop <table>
 // AND hidden mobile cards carrying the same text; getByText() grabbed the hidden
 // mobile span. Scope to the table (role=table) so locators hit the visible row.
@@ -77,7 +76,7 @@ await page.waitForTimeout(500)
 // getByRole('alertdialog') finds nothing. And with two dialogs mounted, "last
 // non-Cancel button" is ambiguous — target the unique destructive class instead.
 const delResp = page.waitForResponse(
-  (r) => r.url().includes('/surgeons/') && r.request().method() === 'DELETE',
+  (r) => r.url().includes('/authors/') && r.request().method() === 'DELETE',
   { timeout: 9000 },
 ).catch(() => null)
 await page.locator('button.bg-destructive').first().click()
