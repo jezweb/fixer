@@ -69,13 +69,13 @@ const rec = await createRecorder(context, page, `${OUT}/frames`)
 
 // ===== ADAPT THIS BLOCK: your journey. Pace actions (~0.7–1.8s holds) so motion
 // reads on camera. Start recording AFTER the first settled paint. =====
-await page.goto(`${BASE}/dashboard/surgeons`, { waitUntil: 'networkidle' })
+await page.goto(`${BASE}/dashboard/authors`, { waitUntil: 'networkidle' })
 const table = page.getByRole('table')
-await table.getByText('Dr Example Surgeon').first().waitFor({ timeout: 15000 })
+await table.getByText('Example Author').first().waitFor({ timeout: 15000 })
 await page.waitForTimeout(600)
 await rec.start()
 await page.waitForTimeout(900)
-const row = table.getByRole('row', { name: /Dr Example Surgeon/ }).first()
+const row = table.getByRole('row', { name: /Example Author/ }).first()
 let menu = row.getByRole('button', { name: /open menu/i }); if (!(await menu.count())) menu = row.getByRole('button').last()
 await menu.click(); await page.waitForTimeout(900)
 await page.getByRole('menuitem', { name: 'Delete', exact: true }).click(); await page.waitForTimeout(900)

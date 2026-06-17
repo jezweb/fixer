@@ -72,7 +72,7 @@ replay it byte-for-byte. Pin everything that varies:
 
 - **Where** — the **live** app for read-only-observable bugs. But when the repro
   needs a precondition you can't safely stage on prod (an FK-linked row, a
-  patient with a related carer, a survey token — anything requiring a write), use
+  a record with a related child row, a one-time token — anything requiring a write), use
   a **local seeded dev DB** and pin the seed so AFTER replays the same data. Don't
   assume local can't show "deploy-class" DB failures: local Cloudflare D1 enforces
   FKs (`PRAGMA foreign_keys = 1`), so FK-constraint bugs DO reproduce locally.
@@ -88,7 +88,7 @@ replay it byte-for-byte. Pin everything that varies:
 
 Capture at each checkpoint: **screenshot + animated GIF + full video + console +
 network** — and grab the **failing response BODY**, not just the status; it usually
-names the mechanism (`500 {"error":"Failed to delete surgeon"}` → an FK constraint,
+names the mechanism (`500 {"error":"Failed to delete author"}` → an FK constraint,
 not a permissions bug). Pin the **code location** (`file:line`) you suspect. Cap
 stills at 1440px before re-reading (`sips -Z 1440`, per the screenshot rule). The
 worked example + earned gotchas (modal stacking, shadcn `role="dialog"`, ESM
@@ -134,7 +134,7 @@ and a **`compare.html` slider**. Publish via `pagedrop` for a shareable `xr2.au`
 
 **Two cuts, two audiences.** The evidence has two readers, and they need different things:
 - **Author / you** — the full technical verdict: claim → mechanism → fix → before/after → any *surfaced* issues the journey caught.
-- **Stakeholder** (client, QA, non-technical owner) — the lightest cut that shows the delta + ONE plain-English line ("✓ the Theatre List now colours per hospital, matches the schedule"). No jargon, no file paths, no caveats they can't action.
+- **Stakeholder** (client, QA, non-technical owner) — the lightest cut that shows the delta + ONE plain-English line ("✓ the report now groups by region, matches the brief"). No jargon, no file paths, no caveats they can't action.
 
 **Match the stakeholder cut to what changed (and crop tight).** A clip is the default but not always the right one — pick by what the fix actually altered:
 - **A static delta** (a label, a colour, a layout, a now-present element) → a **cropped before/after still** or the `compare.html` slider, *not* a 10-second clip. A still they absorb at a glance beats a clip they wait through to see a change that was already visible in frame one.
@@ -168,7 +168,7 @@ the requirement, get it before filming. "Looks right" is not acceptance.
 
 1. **Turn the requirement into checkpoints.** Same labelled steps as PROVE-BEFORE,
    but each checkpoint asserts a *clause of the requirement*, not a bug repro. If the
-   card says "colour each hospital + show the legend", that's two checkpoints.
+   card says "group each region + show the legend", that's two checkpoints.
 2. **Run the journey on the merged code** (seed the precondition if the requirement
    needs data that prod can't safely hold). Capture screenshot + clip + each
    asserting checkpoint.

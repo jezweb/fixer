@@ -70,7 +70,7 @@ Per project: `<project>/.jez/fixer/<slug>/` holding `case.md`, `spec.json`,
 
 The SKILL says reproduce on the **live** app. Add one branch: when a bug needs a
 **precondition you can't safely stage on production** — an FK-linked record, a
-patient with a related carer row, a survey token, anything requiring a write — use
+a record with a related child row, a one-time token, anything requiring a write — use
 a **local seeded dev DB** instead, and pin the seed so AFTER replays against the
 same data. Live prod is right for read-only-observable bugs; local-seeded is right
 when (a) repro requires mutating data, or (b) prod holds real PHI / can't be dirtied.
@@ -103,7 +103,7 @@ Worked example in `templates/capture-before.example.mjs`. Each cost real time on
    unique class (`button.bg-destructive`) and dismiss overlays with a deterministic
    `Escape`. Bonus: filming the real flow *surfaced* that propagation bug.
 6. **Capture the failing network body** — logging `page.waitForResponse(DELETE)`
-   yielded `500 {"error":"Failed to delete surgeon"}`, which named the mechanism
+   yielded `500 {"error":"Failed to delete author"}`, which named the mechanism
    (FK 500 → generic toast) far better than the screenshot. Add the failing
    response body to the indictment, not just the pixels.
 7. **Symlinked `node_modules` breaks standalone ESM** — when you stage a merged PR
@@ -135,8 +135,8 @@ animated-GIF leg when you don't need motion:
 ## Adopters
 
 - **A Cloudflare Workers + React 19 + Hono + D1 app** (anonymised adopter) — first PROVE-BEFORE
-  capture: a surgeon-delete case, "admin can't delete a surgeon," proven to be an FK
-  constraint (`DELETE /api/surgeons/:id` → `500 {"error":"Failed to delete surgeon"}`)
+  capture: an author-delete case, "admin can't delete an author," proven to be an FK
+  constraint (`DELETE /api/authors/:id` → `500 {"error":"Failed to delete author"}`)
   surfacing as a generic toast, *not* a permissions bug. Captured on local seeded
   dev (FK enforced locally). Surprises: all six gotchas above, plus `recordVideo`
   writing 0-byte files — which is what prompted the bundled CDP recorder. Full
